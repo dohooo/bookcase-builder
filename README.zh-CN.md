@@ -1,6 +1,8 @@
 ![logo](./assets/cover.png)
 
 <p align="center">
+<em>"把书都放在书架上"</em>
+<br/>
 组织Storybooks以供概览
 </p>
 
