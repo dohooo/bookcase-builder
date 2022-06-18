@@ -10,6 +10,10 @@
 <a href="./README.md">English</a> | 简体中文
 </p>
 
+<h3 align="center">
+未完成 🔴
+</h3>
+
 ## 背景
 在Monorepo项目中，通常我们会将每个包下的storybook分别构建，并使用CI将storybook部署至服务端。
 
