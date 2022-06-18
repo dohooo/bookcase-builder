@@ -1,7 +1,7 @@
 ![logo](./assets/cover.png)
 
 <p align="center">
-<em>"Put all the books on the shelf"</em>
+<em>"Put all the books in the bookcase."</em>
 <br/>
 Compose storybooks for an overview.
 </p>
