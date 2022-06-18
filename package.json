@@ -8,6 +8,9 @@
   "license": "MIT",
   "funding": "https://github.com/sponsors/dohooo",
   "homepage": "https://github.com/dohooo/bookcase-builder#readme",
+  "bin":{
+    "bb": "./dist/index.cjs"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dohooo/bookcase-builder.git"
@@ -47,7 +50,7 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@dohooo/eslint-config": "^0.25.1",
+    "@dohooo/eslint-config": "^0.0.2",
     "@antfu/ni": "^0.16.2",
     "@antfu/utils": "^0.5.2",
     "@types/node": "^17.0.44",

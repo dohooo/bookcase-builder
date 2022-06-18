@@ -1,23 +1,74 @@
-English | [简体中文](./README.zh-CN.md)
-# bookcase-builder
-
 ![logo](./assets/cover.png)
 
+<p align="center">
+Compose storybooks for overview.
+</p>
 
-## Usage
+<p align="center">
+English | <a href="./README.zh-CN.md">简体中文</a>
+</p>
 
-1. Create a config in `package.json`.
+## Background
+In the monorepo project, usually we will have a storybook for each package, and use CI to deploy them to the server.
+
+```
+packages
+    |--- packages-1
+            |--- .storybook
+            |--- public
+    |--- packages-2
+            |--- .storybook
+            |--- public
+    |--- packages-3
+            |--- .storybook
+            |--- public
+    |--- ...
+```
+
+But each project deployment link is independent.
+```
+https://localhost:3000/packages-1
+https://localhost:3000/packages-2
+https://localhost:3000/packages-3
+```
+
+Storybook provides [ref](https://storybook.js.org/docs/react/sharing/storybook-composition) attribute, which allows us to compose them together, and access them via an address.
+```
+https://localhost:3000/overview
+    |- https://localhost:3000/packages-1
+    |- https://localhost:3000/packages-2
+    |- https://localhost:3000/packages-3
+```
+But it's not easy to compose them together. We need to modify a lot of packaging configurations, and create a package for this, and these configurations only need to be used when building overview. It's too complicated, so that's where this tool comes in, and it can do it all in one command.
+> The [chromatic](https://www.chromatic.com) tool was officially recommended, and it made it easy for us to do this, but we couldn't use it to complete the build and privatize the deployment.
+
+## Installation
+```shell
+npm i bookcase-builder -D
+```
+
+## Configurations
+
 ```json
+// package.json
+
 {
   ...,
+  // default settings
   "bookcase-builder":{
     "workspaces": [
-      // default
-      "packages/*",
+      "packages/*", 
     ],
+    "output": "./public",
   },
   ...,
 }
+```
+## Usage
+> `bookcase-builder` as `bb`.
+
+```bash
+npx bb
 ```
 
 ## Sponsors
