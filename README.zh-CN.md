@@ -71,6 +71,22 @@ npm i bookcase-builder -D
 ```bash
 npx bb
 ```
+## 提示
+
+如何修改public url?  
+```json
+// 比如我们想把它部署到GitHub.
+
+{
+  "bookcase-builder": {
+    /*
+     * 将会变成...
+     * https://[用户名].github.io/[仓库名称]/packages-1
+     */
+    "publicURL": "[仓库名称]"
+  }
+}
+```
 
 ## 赞助者
 

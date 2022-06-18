@@ -53,15 +53,13 @@ npm i bookcase-builder -D
 // package.json
 
 {
-  ...,
   // default settings
-  "bookcase-builder":{
+  "bookcase-builder": {
     "workspaces": [
-      "packages/*", 
+      "packages/*"
     ],
-    "output": "./public",
-  },
-  ...,
+    "output": "./public"
+  }
 }
 ```
 ## Usage
@@ -69,6 +67,23 @@ npm i bookcase-builder -D
 
 ```bash
 npx bb
+```
+
+## Tips
+
+How to modify the public url?  
+```json
+// e.g. We want to deploy it to the GitHub.
+
+{
+  "bookcase-builder": {
+    /*
+     * It will be...
+     * https://[username].github.io/[repository name]/packages-1
+     */
+    "publicURL": "[repository name]"
+  }
+}
 ```
 
 ## Sponsors
