@@ -1,7 +1,7 @@
 English | [简体中文](./README.zh-CN.md)
 # bookcase-builder
 
-![logo](./assets/logo.jpeg)
+![logo](./assets/logo.png)
 
 
 ## Usage
