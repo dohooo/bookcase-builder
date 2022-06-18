@@ -1,6 +1,8 @@
 ![logo](./assets/cover.png)
 
 <p align="center">
+<em>"Put all the books on the shelf"</em>
+<br/>
 Compose storybooks for an overview.
 </p>
 
