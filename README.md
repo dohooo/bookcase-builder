@@ -1,7 +1,7 @@
 ![logo](./assets/cover.png)
 
 <p align="center">
-Compose storybooks for overview.
+Compose storybooks for an overview.
 </p>
 
 <p align="center">
