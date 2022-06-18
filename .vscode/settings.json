@@ -1,0 +1,8 @@
+{
+  "cSpell.words": ["dohooo"],
+  "prettier.enable": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "goldRight.templateDirectoryPath": "./.vscode/templates"
+}
