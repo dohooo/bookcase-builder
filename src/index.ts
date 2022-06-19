@@ -1,3 +1,2 @@
-/* eslint-disable no-console */
-
-console.log('Hi~')
+#!/usr/bin/env node
+export { withOverview } from './withOverview'
