@@ -1,12 +1,18 @@
 ![logo](./assets/cover.png)
 
 <p align="center">
-Compose storybooks for overview.
+<em>"Put all the books in the bookcase."</em>
+<br/>
+Compose storybooks for an overview.
 </p>
 
 <p align="center">
 English | <a href="./README.zh-CN.md">简体中文</a>
 </p>
+
+<h3 align="center">
+Unfinish 🔴
+</h3>
 
 ## Background
 In the monorepo project, usually we will have a storybook for each package, and use CI to deploy them to the server.
