@@ -1,6 +1,6 @@
 import chalk from 'chalk'
 
-const prefix = '[bookcase-builder] '
+export const prefix = '[bookcase-builder] '
 
 // eslint-disable-next-line no-console
 const log = (...args: string[]) => console.log(prefix, ...args)

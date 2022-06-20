@@ -10,16 +10,20 @@ export function getPackageInfo(packagePath: string): PackageInfo {
   }
 }
 
-export function findAllPackagesInfo() {
-  const cwd = process.cwd()
+export function findAllPackagesInfo(options: { valid?: boolean; cwd?: string } = {}) {
+  const { valid = false, cwd = process.cwd() } = options
   const config: Partial<BookcaseBuilderConfig> = getBookcaseBuilderBConfig(cwd) || {}
   const workspaces = config.workspaces || []
   const packagesInfo: PackageInfo[] = []
   workspaces.forEach((pattern) => {
     const packagesRelativePath = glob.sync(pattern, { cwd })
-
-    packagesInfo.push(...packagesRelativePath.map<PackageInfo>(relativePath => getPackageInfo(join(cwd, relativePath))))
+    packagesInfo.push(...packagesRelativePath.map<PackageInfo>((relativePath) => {
+      return getPackageInfo(join(cwd, relativePath))
+    }))
   })
+
+  if (valid)
+    return packagesInfo.filter(({ bookcaseBuilderConfig }) => !!bookcaseBuilderConfig)
 
   return packagesInfo
 }

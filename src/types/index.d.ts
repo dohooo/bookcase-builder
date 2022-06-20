@@ -11,4 +11,5 @@ export type BookcaseBuilderConfig = Partial<{
 export interface PackageInfo {
   packagePath: string
   bookcaseBuilderConfig: BookcaseBuilderConfig
+  isOverview?: boolean
 }

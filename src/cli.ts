@@ -13,7 +13,6 @@ function cliSetup() {
   Examples
     $ bb -o ./
 `, {
-    importMeta: import.meta,
     flags: {
       output: {
         type: 'string',

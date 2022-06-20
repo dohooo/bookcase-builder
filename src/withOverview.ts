@@ -1,5 +1,7 @@
-import path from 'path'
-import type { StorybookViteConfig } from '@storybook/builder-vite'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+import path, { join } from 'path'
+import type { StorybookViteConfig, ViteFinal } from '@storybook/builder-vite'
 import type { InlineConfig } from 'vite'
 import { defineConfig, mergeConfig } from 'vite'
 import { getPackageInfo } from './find-all-packages'
@@ -33,7 +35,7 @@ const defineManagerConfig = (packageInfo: PackageInfo, config: Record<string, an
 
 export const withOverview
   = (__dirname: string) =>
-    (_config: StorybookViteConfig): StorybookViteConfig => {
+    (_config: Omit<StorybookViteConfig, 'viteFinal'> & { viteFinal?: ViteFinal }): StorybookViteConfig => {
       const isOverview = process.env.__BOOKCASE_BUILDER_FLAG__ === 'true'
 
       if (!isOverview)
@@ -45,28 +47,22 @@ export const withOverview
       if (_config?.features?.buildStoriesJson === false)
         throw new Error('features.buildStoriesJson is not enabled')
 
-      const packageInfo = getPackageInfo(__dirname)
+      const packageInfo = getPackageInfo(join(__dirname, '../'))
 
       const managerWebpack = async (...args: any[]) => {
         const config = (await _config.managerWebpack?.(...args)) || args?.[0]
-        if (isOverview)
-          return defineManagerConfig(packageInfo, config)
-
-        return config
+        return defineManagerConfig(packageInfo, config)
       }
 
       const viteFinal: typeof _config['viteFinal'] = async (...args: any[]) => {
         const config = (await _config.viteFinal?.(...args)) || args?.[0]
-        if (isOverview)
-          return defineOverviewConfig(packageInfo, config)
-
-        return config
+        return defineOverviewConfig(packageInfo, config)
       }
 
       return {
         ..._config,
-        features: { ...(_config.features || {}), buildStoriesJson: _config?.features?.buildStoriesJson ?? isOverview },
         managerWebpack,
+        features: { ...(_config.features || {}), buildStoriesJson: _config?.features?.buildStoriesJson ?? true },
         viteFinal,
       }
     }

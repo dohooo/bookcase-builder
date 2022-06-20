@@ -18,8 +18,8 @@ function getBasePath(info: PackageInfo) {
   return join(publicURL, basename, '/')
 }
 
-function getBasename({ bookcaseBuilderConfig, packagePath }: PackageInfo) {
-  return bookcaseBuilderConfig.basename || packagePath.split('/').pop()!
+function getBasename(info: PackageInfo) {
+  return info.bookcaseBuilderConfig.basename || info.packagePath.split('/').pop()!
 }
 
 function getOutputDir(packageInfo: PackageInfo) {

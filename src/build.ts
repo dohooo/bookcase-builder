@@ -1,50 +1,90 @@
 import { join } from 'path'
 import cp from 'child_process'
-import { findAllPackagesInfo } from './find-all-packages'
+import { cwd } from 'process'
 import { validateConfigs } from './validation'
-import { chalkSuccess, logNormal, logWarning } from './log'
+import { chalkSuccess, logError, logNormal, logSuccess, logWarning } from './log'
 import { packageInfoUtils } from './package-info-utils'
 
 import './cli'
+import { findAllPackagesInfo } from './find-all-packages'
 
 export function build() {
-  const allPackagesInfo = findAllPackagesInfo()
+  // const overviewPackageInfo = getOverviewInfo()
+  const allPackagesInfo = findAllPackagesInfo({ valid: true })
   const isValid = validateConfigs(allPackagesInfo)
 
   if (!isValid)
     return undefined
 
-  const validPackages = allPackagesInfo.filter(({ bookcaseBuilderConfig }) => !!bookcaseBuilderConfig)
+  if (allPackagesInfo.length) {
+    logNormal(`Found ${allPackagesInfo.length} package${allPackagesInfo.length > 1 ? 's' : ''}...`)
+    const maxLength = allPackagesInfo.reduce((length, info) => {
+      const {
+        basename,
+      } = packageInfoUtils(info)
 
-  if (validPackages.length) {
-    logNormal(`Found ${validPackages.length} package${validPackages.length > 1 ? 's' : ''}...`)
-    validPackages.forEach((info) => {
+      if (basename.length > length)
+        return basename.length
+      return length
+    }, 0)
+
+    allPackagesInfo.forEach((info) => {
       const { packagePath } = info
       const {
         basename,
       } = packageInfoUtils(info)
-      logNormal(`${chalkSuccess(`[${basename}]`)}|__${packagePath}`)
+
+      logNormal(`${chalkSuccess(`[${basename}]`.padEnd(maxLength + 5, ' '))}|__${packagePath}`)
     })
   }
   else {
     logWarning('No packages found.')
   }
 
-  validPackages.forEach((info) => {
-    const { packagePath } = info
+  const results = allPackagesInfo.map((info) => {
+    const { packagePath, isOverview } = info
     const {
       basename, storybookDir, outputDir, basePath,
     } = packageInfoUtils(info)
 
-    logNormal(`Building bookcase for package ${chalkSuccess(`[${basename}]`)}:`, packagePath)
+    const name = `[${basename}]`
 
-    const buildCommand = `npx cross-env __BOOKCASE_BUILDER_FLAG__=true npx build-storybook -c ${storybookDir} -o ${outputDir} --no-manager-cache --preview-url ${join(
+    logNormal(`Building bookcase for package ${chalkSuccess(name)}`)
+    logNormal(`Path: ${packagePath}`)
+
+    let injectEnv = 'npx cross-env __BOOKCASE_BUILDER_FLAG__=true '
+
+    if (isOverview)
+      injectEnv += `__BOOKCASE_BUILDER_PATH__=${cwd()}`
+
+    const buildCommand = `${injectEnv} npx build-storybook -c ${storybookDir} -o ${outputDir} --no-manager-cache --preview-url ${join(
       basePath,
       'iframe.html',
     )} --force-build-preview`
 
-    cp.execSync(buildCommand, { stdio: 'inherit', cwd: packagePath })
+    try {
+      logNormal(buildCommand)
+      cp.execSync(buildCommand, { stdio: 'inherit', cwd: packagePath })
+    }
+    catch (e: any) {
+      logError(e)
+      logError(`Package ${name} failed to build. skipping...`)
+
+      return {
+        log: () => logError(`${name} ❌`),
+        success: false,
+      }
+    }
+
+    return {
+      log: () => logSuccess(`${name} ✅`),
+      success: true,
+    }
   })
+
+  logNormal(`Build complete. ${results.filter(({ success }) => success).length} succeeded, ${results.filter(({ success }) => !success).length} failed.`)
+
+  results.map(({ log }) => log())
 }
 
 build()
