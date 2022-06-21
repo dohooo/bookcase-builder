@@ -1,12 +1,17 @@
 import { join } from 'path'
 import cp from 'child_process'
 import { cwd } from 'process'
+import { fileURLToPath } from 'url'
 import { validateConfigs } from './validation'
 import { chalkSuccess, logError, logNormal, logSuccess, logWarning } from './log'
 import { packageInfoUtils } from './package-info-utils'
 
 import { cli } from './cli'
 import { findAllPackagesInfo } from './find-all-packages'
+import type { BookcaseBuilderConfig } from './types'
+import { getBookcaseBuilderBConfig } from './get-bookcase-builder-config'
+
+const CROSS_ENV_CLI = join(fileURLToPath(import.meta.url), '../../node_modules/cross-env/src/bin/cross-env.js')
 
 export function build() {
   const allPackagesInfo = findAllPackagesInfo({ valid: true })
@@ -46,14 +51,14 @@ export function build() {
     const {
       basename, storybookDir, basePath,
     } = packageInfoUtils(info)
-
-    const outputDir = join(cwd(), cli.flags.output || '', basename)
+    const config: Partial<BookcaseBuilderConfig> = getBookcaseBuilderBConfig(cwd()) || {}
+    const outputDir = join(cwd(), cli.flags.output || config.output || '', basename)
     const name = `[${basename}]`
 
     logNormal(`Building bookcase for package ${chalkSuccess(name)}`)
     logNormal(`Path: ${packagePath}`)
 
-    const injectEnv = `npx cross-env __BOOKCASE_BUILDER_FLAG__=true __BOOKCASE_BUILDER_ROOT__=${cwd()}`
+    const injectEnv = `${CROSS_ENV_CLI} __BOOKCASE_BUILDER_FLAG__=true __BOOKCASE_BUILDER_ROOT__=${cwd()}`
 
     const buildCommand = `${injectEnv} npx build-storybook -c ${storybookDir} -o ${outputDir} --no-manager-cache --preview-url ${join(
       basePath,

@@ -1,9 +1,13 @@
-import { readFileSync } from 'fs'
+import { existsSync, readFileSync } from 'fs'
 import { join } from 'path'
 import type { BookcaseBuilderConfig } from './types'
 
 export function getBookcaseBuilderBConfig(packagePath: string): BookcaseBuilderConfig {
   const packageJsonPath = join(packagePath, 'package.json')
+
+  if (!existsSync(packageJsonPath))
+    return {}
+
   const result = JSON.parse(readFileSync(packageJsonPath, 'utf8')) as any
   if (!result)
     return {}
