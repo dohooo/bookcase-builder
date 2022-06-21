@@ -17,9 +17,9 @@ function getBasePath(info: PackageInfo) {
 }
 
 function getBasename(info: PackageInfo) {
-  return info.bookcaseBuilderConfig.basename || info.packagePath.split('/').filter(s => !!s).pop()!
+  return info.bookcaseBuilderConfig?.basename || info.packagePath.split('/').filter(s => !!s).pop()!
 }
 
 function getStorybookDir({ bookcaseBuilderConfig, packagePath }: PackageInfo) {
-  return join(packagePath, bookcaseBuilderConfig.storybook?.configDir || '.storybook')
+  return join(packagePath, bookcaseBuilderConfig?.storybook?.configDir || '.storybook')
 }

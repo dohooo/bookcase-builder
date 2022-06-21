@@ -10,6 +10,8 @@ import { cli } from './cli'
 const defineOverviewConfig = (packageInfo: PackageInfo, config: Record<string, any>): InlineConfig => {
   const { basePath } = packageInfoUtils(packageInfo)
 
+  delete config?.build?.rollupOptions?.external
+
   return mergeConfig(
     config,
     defineConfig({

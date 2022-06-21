@@ -4,9 +4,11 @@ import { getBookcaseBuilderBConfig } from './get-bookcase-builder-config'
 import type { BookcaseBuilderConfig, PackageInfo } from './types'
 
 export function getPackageInfo(packagePath: string): PackageInfo {
+  const bookcaseBuilderConfig = getBookcaseBuilderBConfig(packagePath)
+
   return {
     packagePath,
-    bookcaseBuilderConfig: getBookcaseBuilderBConfig(packagePath),
+    bookcaseBuilderConfig,
   }
 }
 
@@ -17,13 +19,15 @@ export function findAllPackagesInfo(options: { valid?: boolean; cwd?: string } =
   const packagesInfo: PackageInfo[] = []
   workspaces.forEach((pattern) => {
     const packagesRelativePath = glob.sync(pattern, { cwd })
-    packagesInfo.push(...packagesRelativePath.map<PackageInfo>((relativePath) => {
-      return getPackageInfo(join(cwd, relativePath))
-    }))
-  })
 
-  if (valid)
-    return packagesInfo.filter(({ bookcaseBuilderConfig }) => !!bookcaseBuilderConfig)
+    packagesRelativePath.forEach((relativePath) => {
+      const packageInfo = getPackageInfo(join(cwd, relativePath))
+      if (valid && packageInfo.bookcaseBuilderConfig)
+        packagesInfo.push(packageInfo)
+
+      else if (!valid) packagesInfo.push(packageInfo)
+    })
+  })
 
   return packagesInfo
 }
