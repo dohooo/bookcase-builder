@@ -5,11 +5,10 @@ import { validateConfigs } from './validation'
 import { chalkSuccess, logError, logNormal, logSuccess, logWarning } from './log'
 import { packageInfoUtils } from './package-info-utils'
 
-import './cli'
+import { cli } from './cli'
 import { findAllPackagesInfo } from './find-all-packages'
 
 export function build() {
-  // const overviewPackageInfo = getOverviewInfo()
   const allPackagesInfo = findAllPackagesInfo({ valid: true })
   const isValid = validateConfigs(allPackagesInfo)
 
@@ -42,20 +41,19 @@ export function build() {
   }
 
   const results = allPackagesInfo.map((info) => {
-    const { packagePath, isOverview } = info
+    const { packagePath } = info
+
     const {
-      basename, storybookDir, outputDir, basePath,
+      basename, storybookDir, basePath,
     } = packageInfoUtils(info)
 
+    const outputDir = join(cwd(), cli.flags.output || '', basename)
     const name = `[${basename}]`
 
     logNormal(`Building bookcase for package ${chalkSuccess(name)}`)
     logNormal(`Path: ${packagePath}`)
 
-    let injectEnv = 'npx cross-env __BOOKCASE_BUILDER_FLAG__=true '
-
-    if (isOverview)
-      injectEnv += `__BOOKCASE_BUILDER_PATH__=${cwd()}`
+    const injectEnv = `npx cross-env __BOOKCASE_BUILDER_FLAG__=true __BOOKCASE_BUILDER_ROOT__=${cwd()}`
 
     const buildCommand = `${injectEnv} npx build-storybook -c ${storybookDir} -o ${outputDir} --no-manager-cache --preview-url ${join(
       basePath,

@@ -7,7 +7,7 @@ function cliSetup() {
 
   Options
     -o, --output <dir-name>          Directory where to store built files
-    -p, --publicURL <public-url>     Basename of URL. (e.g. www.xxx.com/[publicURL/a/b/c])
+    -p, --publicURL <public-url>     Basename of URL. (e.g. www.xxx.com/[publicURL]/a/b/c)
     -h, --help                       display help for command
 
   Examples
