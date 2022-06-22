@@ -1,7 +1,7 @@
 import { join } from 'path'
 import { cli } from './cli'
-import { GLOBAL_CONFIG } from './global-config'
-import type { PackageInfo } from './types'
+import { getBookcaseBuilderBConfig } from './get-bookcase-builder-config'
+import type { BookcaseBuilderConfig, PackageInfo } from './types'
 
 export function packageInfoUtils(packageInfo: PackageInfo) {
   return {
@@ -11,6 +11,7 @@ export function packageInfoUtils(packageInfo: PackageInfo) {
   }
 }
 function getBasePath(info: PackageInfo) {
+  const GLOBAL_CONFIG: Partial<BookcaseBuilderConfig> = getBookcaseBuilderBConfig(process?.env?.__BOOKCASE_BUILDER_ROOT__ as string || '') || {}
   const publicURL = cli.flags.publicURL || GLOBAL_CONFIG.publicURL || ''
   const basename = getBasename(info)
   return join('/', publicURL, basename, '/')
