@@ -1,4 +1,5 @@
 import { join } from 'path'
+import { GLOBAL_CONFIG } from './build'
 import { cli } from './cli'
 import type { PackageInfo } from './types'
 
@@ -11,7 +12,7 @@ export function packageInfoUtils(packageInfo: PackageInfo) {
 }
 
 function getBasePath(info: PackageInfo) {
-  const publicURL = cli.flags.publicURL || ''
+  const publicURL = cli.flags.publicURL || GLOBAL_CONFIG.publicURL || ''
   const basename = getBasename(info)
   return join('/', publicURL, basename, '/')
 }
