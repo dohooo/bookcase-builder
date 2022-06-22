@@ -9,7 +9,8 @@
   "funding": "https://github.com/sponsors/dohooo",
   "homepage": "https://github.com/dohooo/bookcase-builder#readme",
   "bin": {
-    "bb": "./dist/build.cjs"
+    "bb": "./dist/build.cjs",
+    "bookcase-builder": "./dist/build.cjs"
   },
   "repository": {
     "type": "git",

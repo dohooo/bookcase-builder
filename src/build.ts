@@ -7,10 +7,7 @@ import { packageInfoUtils } from './package-info-utils'
 
 import { cli } from './cli'
 import { findAllPackagesInfo } from './find-all-packages'
-import type { BookcaseBuilderConfig } from './types'
-import { getBookcaseBuilderBConfig } from './get-bookcase-builder-config'
-
-export const GLOBAL_CONFIG: Partial<BookcaseBuilderConfig> = getBookcaseBuilderBConfig(cwd()) || {}
+import { GLOBAL_CONFIG } from './global-config'
 
 const build = () => {
   const allPackagesInfo = findAllPackagesInfo({ valid: true })
