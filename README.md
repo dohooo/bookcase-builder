@@ -10,9 +10,7 @@ Compose storybooks for an overview.
 English | <a href="./README.zh-CN.md">简体中文</a>
 </p>
 
-<h3 align="center">
-Unfinish 🔴
-</h3>
+> 📢 CLI `bookcase-builder` as `bb`.
 
 ## Background
 In the monorepo project, usually we will have a storybook for each package, and use CI to deploy them to the server.
@@ -59,37 +57,103 @@ npm i bookcase-builder -D
 // package.json
 
 {
-  // default settings
   "bookcase-builder": {
+    /*
+    * [ 📌 Required ]
+    * Where to find Packages.
+    */
     "workspaces": [
       "packages/*"
     ],
-    "output": "./public"
+    /*
+    * [ 📌 Required ]
+    * Directory where to store built files.
+    */
+    "output": "./public",
+    /*
+    * Rename the current package name, default to package directory name.
+    * e.g.
+    * [root]/packages/packageA => http://localhost:3000/packageA
+    * Set basename to "packageB", it will be http://localhost:3000/packageB
+    */
+    "basename": "packageB",
+    /*
+    * Basename of URL.
+    * e.g.
+    * [root]/packages/packageA => http://localhost:3000/packageA
+    * Set publicURL to "/PREFIX_URL/", it will be http://localhost:3000/PREFIX_URL/packageA
+    */
+    "publicURL": "/PREFIX_URL/",
+    /*
+    * [ 📌 Required ]
+    * Which package manager is used.
+    * 'yarn' | 'npm' | 'pnpm'
+    */
+    "packageManager": "yarn",
+    "storybook": {
+      // Storybook directory, default to ".storybook"
+      "configDir": "./.otherStorybookDir"
+    }
   }
 }
 ```
 ## Usage
-> `bookcase-builder` as `bb`.
+1. Config
 
-```bash
-npx bb
+```json
+// package.json of package root directory.
+
+{
+  "bookcase-builder": {
+    "workspaces": [
+      // Tell BB where to find the packages to be built
+      "packages/*"
+    ],
+    // Let BB where to store the built files
+    "output": "./public",
+    // What package manager is used.
+    "packageManager": "pnpm"
+  }
+}
+```
+
+```json
+// package.json in the workspace directory.
+// Here you can configure the project to be built. For example specify the storybook configuration directory.
+// If you want to use the default configuration, you can set it to "{}". And if haven't configured it, BB will't build it.
+{
+  "bookcase-builder": {
+    // Rename the current package name, default to package directory name.
+    "basename": "other name",
+    "storybook": {
+      // Storybook configuration directory, default to ".storybook"
+      "configDir": "./.otherStorybookDir"
+    }
+  }
+}
+```
+
+```typescript
+// .storybook/main.[js/ts] of the project to be built in the workspace.
+import { withOverview } from 'bookcase-builder';
+
+// Let BB know where to find the project to be built, And send original config to the withOverview function.
+export default withOverview(__dirname)({
+  // Original config.
+  ...,
+});
+```
+
+2. Build
+
+```shell
+$ bookcase-builder or bb
 ```
 
 ## Tips
 
-How to modify the public url?  
-```json
-// e.g. We want to deploy it to the GitHub.
-
-{
-  "bookcase-builder": {
-    /*
-     * It will be...
-     * https://[username].github.io/[repository name]/packages-1
-     */
-    "publicURL": "[repository name]"
-  }
-}
+```shell
+$ bb --help
 ```
 
 ## Sponsors
