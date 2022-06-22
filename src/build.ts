@@ -56,7 +56,18 @@ const build = () => {
     logNormal(`Building bookcase for package ${chalkSuccess(name)}`)
     logNormal(`Path: ${packagePath}`)
 
-    const buildCommand = `npx build-storybook -c ${storybookDir} -o ${outputDir} --no-manager-cache --preview-url ${join(
+    let packageManager = 'npx'
+
+    switch (GLOBAL_CONFIG.packageManager) {
+      case 'npm':
+      case 'pnpm':
+        break
+      case 'yarn':
+        packageManager = 'yarn'
+        break
+    }
+
+    const buildCommand = `${packageManager} build-storybook -c ${storybookDir} -o ${outputDir} --no-manager-cache --preview-url ${join(
       basePath,
       'iframe.html',
     )} --force-build-preview`

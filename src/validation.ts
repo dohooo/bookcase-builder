@@ -11,6 +11,7 @@ const schema: JSONSchemaType<BookcaseBuilderConfig> = {
   properties: {
     workspaces: { type: 'array', items: { type: 'string', nullable: true }, nullable: true },
     output: { type: 'string', nullable: true },
+    packageManager: { type: 'string', nullable: true },
     basename: { type: 'string', nullable: true },
     publicURL: { type: 'string', nullable: true },
     storybook: { type: 'object', properties: { configDir: { type: 'string', nullable: true } }, nullable: true, additionalProperties: false },

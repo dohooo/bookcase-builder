@@ -1,5 +1,8 @@
 {
-  "cSpell.words": ["dohooo"],
+  "cSpell.words": [
+    "dohooo",
+    "pnpm"
+  ],
   "prettier.enable": false,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true,

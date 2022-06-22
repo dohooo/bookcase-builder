@@ -3,6 +3,7 @@ export type BookcaseBuilderConfig = Partial<{
   output: string
   publicURL: string
   basename: string
+  packageManager: 'yarn' | 'npm' | 'pnpm'
   storybook: Partial<{
     configDir: string
   }>
