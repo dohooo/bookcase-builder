@@ -1,31 +1,33 @@
 import meow from 'meow'
 
-function cliSetup() {
-  const cli = meow(`
+export const cli = meow(`
   Usage
     $ bb [options]
 
   Options
-    -o, --output <dir-name>          Directory where to store built files
-    -p, --publicURL <public-url>     Basename of URL. (e.g. www.xxx.com/[publicURL]/a/b/c)
-    -h, --help                       display help for command
+    -c, --config <path-name>          Config file path name
+    -o, --output <dir-name>           Directory where to store built files
+    -p, --publicURL <public-url>      Basename of URL. (e.g. www.xxx.com/[publicURL]/a/b/c)
+    --help                            display help for command
+    --version                         display version for command
 
   Examples
     $ bb -o ./
 `, {
-    flags: {
-      output: {
-        type: 'string',
-        alias: 'o',
-      },
-      publicURL: {
-        type: 'string',
-        alias: 'p',
-      },
+  autoHelp: true,
+  autoVersion: true,
+  flags: {
+    output: {
+      type: 'string',
+      alias: 'o',
     },
-  })
-
-  return cli
-}
-
-export const cli = cliSetup()
+    configFile: {
+      type: 'string',
+      alias: 'c',
+    },
+    publicURL: {
+      type: 'string',
+      alias: 'p',
+    },
+  },
+})

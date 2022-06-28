@@ -1,4 +1,4 @@
-import { join } from 'path'
+import path, { join } from 'path'
 import cp from 'child_process'
 import { cwd } from 'process'
 import { validateConfigs } from './validation'
@@ -7,11 +7,11 @@ import { packageInfoUtils } from './package-info-utils'
 
 import { cli } from './cli'
 import { findAllPackagesInfo } from './find-all-packages'
-import { getBookcaseBuilderBConfig } from './get-bookcase-builder-config'
+import { getBookcaseBuilderConfig } from './get-bookcase-builder-config'
 import type { BookcaseBuilderConfig } from './types'
 
 const build = () => {
-  const GLOBAL_CONFIG: Partial<BookcaseBuilderConfig> = getBookcaseBuilderBConfig(cwd()) || {}
+  const GLOBAL_CONFIG: Partial<BookcaseBuilderConfig> = getBookcaseBuilderConfig(cwd()) || {}
   const allPackagesInfo = findAllPackagesInfo({ valid: true })
   const isValid = validateConfigs(allPackagesInfo)
 
@@ -31,12 +31,10 @@ const build = () => {
     }, 0)
 
     allPackagesInfo.forEach((info) => {
-      const { packagePath } = info
-      const {
-        basename,
-      } = packageInfoUtils(info)
+      const { packagePath, packageJson } = info
+      const name = packageJson?.name || path.basename(packagePath)
 
-      logNormal(`${chalkSuccess(`[${basename}]`.padEnd(maxLength + 5, ' '))}|__${packagePath}`)
+      logNormal(`${chalkSuccess(`[${name}]`.padEnd(maxLength + 5, ' '))}|__${packagePath}`)
     })
   }
   else {
@@ -44,13 +42,13 @@ const build = () => {
   }
 
   const results = allPackagesInfo.map((info) => {
-    const { packagePath } = info
+    const { packagePath, packageJson } = info
 
     const {
-      basename, storybookDir, basePath,
+      storybookDir, basePath, output,
     } = packageInfoUtils(info)
-    const outputDir = join(cwd(), cli.flags.output || GLOBAL_CONFIG.output || '', basename)
-    const name = `[${basename}]`
+    const outputDir = join(cwd(), cli.flags.output || GLOBAL_CONFIG.output || '', output)
+    const name = `[${packageJson?.name || path.basename(packagePath)}]`
 
     logNormal(`Building bookcase for package ${chalkSuccess(name)}`)
     logNormal(`Path: ${packagePath}`)
@@ -66,7 +64,10 @@ const build = () => {
         break
     }
 
-    const buildCommand = `${packageManager} build-storybook -c ${storybookDir} -o ${outputDir} --no-manager-cache --preview-url ${join(
+    // Append to the build-storybook parameter to prevent the build-storybook command execution.
+    const bbArgv = process.argv.slice(2).join(' ')
+
+    const buildCommand = `${packageManager} build-storybook ${bbArgv} --config-dir ${storybookDir} --output-dir ${outputDir} --no-manager-cache --preview-url ${join(
       basePath,
       'iframe.html',
     )} --force-build-preview`

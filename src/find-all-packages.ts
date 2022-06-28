@@ -1,20 +1,23 @@
 import { join } from 'path'
 import glob from 'glob'
-import { getBookcaseBuilderBConfig } from './get-bookcase-builder-config'
+import { getBookcaseBuilderConfig } from './get-bookcase-builder-config'
 import type { BookcaseBuilderConfig, PackageInfo } from './types'
+import { getPackageJson } from './get-package-json'
 
 export function getPackageInfo(packagePath: string): PackageInfo {
-  const bookcaseBuilderConfig = getBookcaseBuilderBConfig(packagePath)
+  const packageJson = getPackageJson(packagePath)
+  const bookcaseBuilderConfig = getBookcaseBuilderConfig(packagePath)
 
   return {
     packagePath,
+    packageJson,
     bookcaseBuilderConfig,
   }
 }
 
 export function findAllPackagesInfo(options: { valid?: boolean; cwd?: string } = {}) {
   const { valid = false, cwd = process.cwd() } = options
-  const config: Partial<BookcaseBuilderConfig> = getBookcaseBuilderBConfig(cwd) || {}
+  const config: Partial<BookcaseBuilderConfig> = getBookcaseBuilderConfig(cwd) || {}
   const workspaces = config.workspaces || []
   const packagesInfo: PackageInfo[] = []
   workspaces.forEach((pattern) => {

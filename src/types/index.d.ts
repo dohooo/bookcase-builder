@@ -11,5 +11,6 @@ export type BookcaseBuilderConfig = Partial<{
 
 export interface PackageInfo {
   packagePath: string
+  packageJson?: Record<any, any>
   bookcaseBuilderConfig?: BookcaseBuilderConfig
 }

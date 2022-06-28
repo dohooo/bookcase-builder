@@ -1,18 +1,23 @@
 import { existsSync, readFileSync } from 'fs'
 import { join } from 'path'
+import { cli } from './cli'
+import { getPackageJson } from './get-package-json'
 import type { BookcaseBuilderConfig } from './types'
 
-export function getBookcaseBuilderBConfig(packagePath: string): BookcaseBuilderConfig | undefined {
-  const packageJsonPath = join(packagePath, 'package.json')
+// bookcase-builder.json > package.json
+export function getBookcaseBuilderConfig(packagePath: string): BookcaseBuilderConfig | undefined {
+  const bookcaseBuilderJsonPath = join(packagePath, cli.flags.configFile || 'bookcase-builder.config.json')
 
-  if (!existsSync(packageJsonPath))
-    return undefined
+  if (existsSync(bookcaseBuilderJsonPath)) {
+    const config = JSON.parse(readFileSync(bookcaseBuilderJsonPath, 'utf8')) as any
+    if (config)
+      return config
+  }
 
-  const result = JSON.parse(readFileSync(packageJsonPath, 'utf8')) as any
-  if (!result)
-    return undefined
+  const packageJson = getPackageJson(packagePath)
+  const config = packageJson?.['bookcase-builder'] as BookcaseBuilderConfig
+  if (config)
+    return config
 
-  const config = result?.['bookcase-builder'] as BookcaseBuilderConfig
-
-  return config
+  return undefined
 }
