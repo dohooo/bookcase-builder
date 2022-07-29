@@ -9,9 +9,10 @@ export interface Ref {
 }
 
 export function getRefs(cb?: (ref: Ref) => Ref) {
-  const refs = findAllPackagesInfo({ valid: true, cwd: process.env.__BOOKCASE_BUILDER_ROOT__ })
+  const cwd = process.env.__BOOKCASE_BUILDER_ROOT__ as string
+  const refs = findAllPackagesInfo({ valid: true, cwd })
     .reduce<Ref>((prev, info) => {
-      const { basename, basePath } = packageInfoUtils(info)
+      const { basename, basePath } = packageInfoUtils(info, cwd)
 
       if (!basename)
         return prev

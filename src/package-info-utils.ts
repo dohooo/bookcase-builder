@@ -3,9 +3,9 @@ import { cli } from './cli'
 import { getBookcaseBuilderConfig } from './get-bookcase-builder-config'
 import type { BookcaseBuilderConfig, PackageInfo } from './types'
 
-export function packageInfoUtils(packageInfo: PackageInfo) {
+export function packageInfoUtils(packageInfo: PackageInfo, cwd: string) {
   return {
-    output: getOutput(packageInfo),
+    outDir: getOutput(packageInfo, cwd),
     basename: getBasename(packageInfo),
     storybookDir: getStorybookDir(packageInfo),
     basePath: getBasePath(packageInfo),
@@ -22,8 +22,12 @@ function getBasename(info: PackageInfo) {
   return info.bookcaseBuilderConfig?.basename ?? path.basename(info.packagePath)
 }
 
-function getOutput(info: PackageInfo) {
-  return info.bookcaseBuilderConfig?.output ?? path.basename(info.packagePath)
+function getOutput(info: PackageInfo, cwd: string) {
+  const outputBasename = info.bookcaseBuilderConfig?.output ?? path.basename(info.packagePath)
+  const GLOBAL_CONFIG: Partial<BookcaseBuilderConfig> = getBookcaseBuilderConfig(cwd) || {}
+  const outputDir = join(cwd, cli.flags.output || GLOBAL_CONFIG.output || '', outputBasename)
+
+  return outputDir
 }
 
 function getStorybookDir({ bookcaseBuilderConfig, packagePath }: PackageInfo) {

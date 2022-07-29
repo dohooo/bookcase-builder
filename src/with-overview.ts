@@ -5,11 +5,12 @@ import { defineConfig, mergeConfig } from 'vite'
 import { getPackageInfo } from './find-all-packages'
 import type { PackageInfo } from './types'
 import { packageInfoUtils } from './package-info-utils'
-import { cli } from './cli'
 
 const defineOverviewConfig = (packageInfo: PackageInfo, config: Record<string, any>): InlineConfig => {
-  const { basePath } = packageInfoUtils(packageInfo)
+  const cwd = process.env.__BOOKCASE_BUILDER_ROOT__ as string
+  const { basePath, outDir: output } = packageInfoUtils(packageInfo, cwd)
 
+  delete config?.build?.lib
   delete config?.build?.rollupOptions?.external
 
   return mergeConfig(
@@ -17,13 +18,14 @@ const defineOverviewConfig = (packageInfo: PackageInfo, config: Record<string, a
     defineConfig({
       mode: 'production',
       base: basePath,
-      build: { outDir: cli.flags.output, rollupOptions: { external: [] } },
+      build: { outDir: output },
     }),
   )
 }
 
 const defineManagerConfig = (packageInfo: PackageInfo, config: Record<string, any>): Record<string, any> => {
-  const { basePath } = packageInfoUtils(packageInfo)
+  const cwd = process.env.__BOOKCASE_BUILDER_ROOT__ as string
+  const { basePath } = packageInfoUtils(packageInfo, cwd)
 
   config.output.publicPath = basePath
 
@@ -48,9 +50,9 @@ export const withOverview
         return defineManagerConfig(packageInfo, config)
       }
 
-      const viteFinal: typeof _config['viteFinal'] = async (...args: any[]) => {
+      const viteFinal: ViteFinal = async (...args: Parameters<ViteFinal>) => {
         const config = (await _config.viteFinal?.(...args as Parameters<typeof _config.viteFinal>)) || args?.[0]
-        return defineOverviewConfig(packageInfo, config)
+        return defineOverviewConfig(packageInfo, config) as ReturnType<ViteFinal>
       }
 
       return {
