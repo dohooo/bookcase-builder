@@ -4,11 +4,12 @@ import type { InlineConfig } from 'vite'
 import { defineConfig, mergeConfig } from 'vite'
 import { getPackageInfo } from './find-all-packages'
 import type { PackageInfo } from './types'
-import { packageInfoUtils } from './package-info-utils'
+import { getOutDir, packageInfoUtils } from './package-info-utils'
 
 const defineOverviewConfig = (packageInfo: PackageInfo, config: Record<string, any>): InlineConfig => {
   const cwd = process.env.__BOOKCASE_BUILDER_ROOT__ as string
-  const { basePath, outDir: output } = packageInfoUtils(packageInfo, cwd)
+  const outDir = getOutDir(packageInfo, cwd)
+  const { basePath } = packageInfoUtils(packageInfo)
 
   delete config?.build?.lib
   delete config?.build?.rollupOptions?.external
@@ -18,14 +19,13 @@ const defineOverviewConfig = (packageInfo: PackageInfo, config: Record<string, a
     defineConfig({
       mode: 'production',
       base: basePath,
-      build: { outDir: output },
+      build: { outDir },
     }),
   )
 }
 
 const defineManagerConfig = (packageInfo: PackageInfo, config: Record<string, any>): Record<string, any> => {
-  const cwd = process.env.__BOOKCASE_BUILDER_ROOT__ as string
-  const { basePath } = packageInfoUtils(packageInfo, cwd)
+  const { basePath } = packageInfoUtils(packageInfo)
 
   config.output.publicPath = basePath
 

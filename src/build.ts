@@ -3,7 +3,7 @@ import cp from 'child_process'
 import { cwd } from 'process'
 import { validateConfigs } from './validation'
 import { chalkSuccess, logError, logNormal, logSuccess, logWarning } from './log'
-import { packageInfoUtils } from './package-info-utils'
+import { getOutDir, packageInfoUtils } from './package-info-utils'
 
 import { findAllPackagesInfo } from './find-all-packages'
 import { getBookcaseBuilderConfig } from './get-bookcase-builder-config'
@@ -22,7 +22,7 @@ const build = () => {
     const maxLength = allPackagesInfo.reduce((length, info) => {
       const {
         basename,
-      } = packageInfoUtils(info, cwd())
+      } = packageInfoUtils(info)
 
       if (basename.length > length)
         return basename.length
@@ -42,10 +42,10 @@ const build = () => {
 
   const results = allPackagesInfo.map((info) => {
     const { packagePath, packageJson } = info
-
+    const outDir = getOutDir(info, cwd())
     const {
-      storybookDir, basePath, outDir: output,
-    } = packageInfoUtils(info, cwd())
+      storybookDir, basePath,
+    } = packageInfoUtils(info)
 
     const name = `[${packageJson?.name || path.basename(packagePath)}]`
 
@@ -66,7 +66,7 @@ const build = () => {
     // Append to the build-storybook parameter to prevent the build-storybook command execution.
     const bbArgv = process.argv.slice(2).join(' ')
 
-    const buildCommand = `${packageManager} build-storybook ${bbArgv} --config-dir ${storybookDir} --output-dir ${output} --no-manager-cache --preview-url ${join(
+    const buildCommand = `${packageManager} build-storybook ${bbArgv} --config-dir ${storybookDir} --output-dir ${outDir} --no-manager-cache --preview-url ${join(
       basePath,
       'iframe.html',
     )} --force-build-preview`
