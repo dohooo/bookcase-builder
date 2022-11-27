@@ -1,5 +1,7 @@
 ![logo](./assets/cover.png)
 
+<p align='center'>[ WIP 🔴 ]</p>
+
 <p align="center">
 <em>"Put all the books in the bookcase."</em>
 <br/>
